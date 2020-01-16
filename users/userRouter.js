@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
     })
 });
 
-router.post('/:id/posts', validatePost, (req, res) => {
+router.post('/:id/posts', validateUser, validatePost, (req, res) => {
   const { text } = req.body
 
   const user_id = req.params.id
@@ -74,7 +74,7 @@ router.get('/:id/posts', (req, res) => {
     })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUser, (req, res) => {
   database.remove(req.params.id)
     .then(() => {
       res.status(200).json({ message: 'delete: successful' })

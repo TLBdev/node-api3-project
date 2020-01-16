@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
     })
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validatePostId, (req, res) => {
   database.getById(req.params.id)
     .then(data => {
       res.status(201).json(data)
@@ -25,7 +25,7 @@ router.get('/:id', (req, res) => {
     })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validatePostId, (req, res) => {
   // do your magic!
   database.remove(req.params.id)
     .then(() => {
@@ -51,11 +51,19 @@ router.put('/:id', validatePostId, (req, res) => {
 // custom middleware
 
 function validatePostId(req, res, next) {
-  if (!req.body.text) {
-    res.status(400).json({ message: '400: Bad Request' })
-  } else {
-    next()
-  }
+  database.getById(req.params.id)
+    .then(data => {
+
+      console.log(data.id)
+      req.user = data
+      next()
+
+
+
+    })
+    .catch(err => {
+      res.status(400).json({ message: "invalid user id" })
+    })
 }
 
 module.exports = router;
